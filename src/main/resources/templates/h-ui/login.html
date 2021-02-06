@@ -1,0 +1,143 @@
+﻿<!DOCTYPE HTML>
+<html lang="zh-CN">
+<!--xmlns:th="http://www.thymeleaf.org"-->
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="h-ui/lib/html5shiv.js"></script>
+    <script type="text/javascript" src="h-ui/lib/respond.min.js"></script>
+    <![endif]-->
+    <link href="h-ui/static/h-ui/css/H-ui.min.css" rel="stylesheet" type="text/css"/>
+    <link href="h-ui/static/h-ui.admin/css/H-ui.login.css" rel="stylesheet" type="text/css"/>
+    <link href="h-ui/static/h-ui.admin/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="h-ui/lib/Hui-iconfont/1.0.8/iconfont.css" rel="stylesheet" type="text/css"/>
+    <!--[if IE 6]>
+    <script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js"></script>
+    <script>DD_belatedPNG.fix('*');</script>
+    <![endif]-->
+    <title>用户登陆</title>
+</head>
+<body>
+<input type="hidden" id="TenantId" name="TenantId" value=""/>
+<div class="header">
+    <div class="headerTitle" style="font-family: 华文楷体">校园通后台管理系统</div>
+</div>
+<div class="loginWraper">
+    <div id="loginform" class="loginBox">
+        <form class="form form-horizontal" id="login-form" action="index.html" method="post">
+            <div class="row cl">
+                <label class="form-label col-xs-3"><i class="Hui-iconfont">&#xe60d;</i></label>
+                <div class="formControls col-xs-8">
+                    <input id="username" name="username" type="text" placeholder="账户" class="input-text size-L">
+                </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-xs-3"><i class="Hui-iconfont">&#xe60e;</i></label>
+                <div class="formControls col-xs-8">
+                    <input id="password" name="password" type="password" placeholder="密码" class="input-text size-L">
+                </div>
+            </div>
+            <div class="row cl">
+                <div class="formControls col-xs-8 col-xs-offset-3">
+                    <label for="online">
+                        <input type="checkbox" name="online" id="online" value="">
+                        使我保持登录状态</label>
+                </div>
+            </div>
+            <div class="row cl">
+                <div class="formControls col-xs-8 col-xs-offset-3">
+                    <button type="submit" class="btn btn-success radius size-L">&nbsp;登&nbsp;&nbsp;&nbsp;&nbsp;录&nbsp;
+                    </button>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="reset" class="btn btn-default radius size-L">&nbsp;取&nbsp;&nbsp;&nbsp;&nbsp;消&nbsp;
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="footer">Copyright ©2020 沈阳嬴翔 All Rights Reserved.</div>
+<script type="text/javascript" src="h-ui/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="h-ui/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="h-ui/static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="h-ui/lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript">
+    $(function () {
+        // 账号验证
+        $("#login-form").validate({
+            rules: {
+                userAccount: {
+                    required: true
+                },
+                password: {
+                    required: true
+                }
+            },
+            messages: {
+                userAccount: {
+                    required: "账号不能为空！"
+                },
+                password: {
+                    required: "密码不能为空！"
+                }
+            },
+            onkeyup: false,
+            focusCleanup: false,
+            success: "valid",
+            submitHandler: function (form) {
+                $(form).ajaxSubmit({
+                    type: 'post', //
+                    url: 'login', // 需要提交的 url
+                    dataType: "json",
+                    success: function (result) {
+                        console.log(result);
+                        if (result.code == 1) {
+                            // 直接登录
+                            var Token=result.Authorization;
+                            //成功登录, 则将token放入Cookie中
+                            setTokenToCookie(Token);
+                            //成功登录, 则将token放入localStorage中
+                            localStorage.Authorization = Token;
+                            layer.msg('正在登录……', {
+                                icon: 16,
+                                time: 1000,
+                                end: function () {
+                                    console.log("CookieToken：" + getCookie('Authorization'));
+                                    console.log("StorageToken：" + localStorage.getItem("Authorization"));
+                                    window.location.href ='/success';
+                                    /*$.ajax({
+                                        url: result.url,
+                                        //请求头中放入JWT
+                                        beforeSend: function(request) {
+                                            request.setRequestHeader("Authorization", localStorage.getItem("Authorization"));
+                                        },
+                                    })*/
+                                }
+
+                            });
+                        } else {
+                            layer.msg(result.message, {
+                                icon: 2,
+                                time: 1500
+                            });
+                        }
+                    },
+                    error: function () {
+                        layer.msg('loginFail', {
+                            icon: 2,
+                            time: 1500
+                        });
+                    }
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>

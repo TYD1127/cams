@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.winsoar.cams.dao.RecordMapper">
+  <resultMap id="BaseResultMap" type="com.winsoar.cams.pojo.Record">
+    <result column="record_time" jdbcType="DATE" property="recordTime" />
+    <result column="card_num" jdbcType="VARCHAR" property="cardNum" />
+    <result column="record_type" jdbcType="VARCHAR" property="recordType" />
+  </resultMap>
+  <insert id="insert" parameterType="com.winsoar.cams.pojo.Record">
+    insert into record (record_time, card_num, record_type
+      )
+    values (#{recordTime,jdbcType=DATE}, #{cardNum,jdbcType=VARCHAR}, #{recordType,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.winsoar.cams.pojo.Record">
+    insert into record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="recordTime != null">
+        record_time,
+      </if>
+      <if test="cardNum != null">
+        card_num,
+      </if>
+      <if test="recordType != null">
+        record_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="recordTime != null">
+        #{recordTime,jdbcType=DATE},
+      </if>
+      <if test="cardNum != null">
+        #{cardNum,jdbcType=VARCHAR},
+      </if>
+      <if test="recordType != null">
+        #{recordType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

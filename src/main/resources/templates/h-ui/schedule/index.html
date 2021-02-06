@@ -1,0 +1,231 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="Bookmark" href="/favicon.ico">
+    <link rel="Shortcut Icon" href="/favicon.ico"/>
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="../../h-ui/lib/html5shiv.js"></script>
+    <script type="text/javascript" src="../../h-ui/lib/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="../../h-ui/static/h-ui/css/H-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../../h-ui/static/h-ui.admin/css/H-ui.admin.css"/>
+    <link rel="stylesheet" type="text/css" href="../../h-ui/lib/Hui-iconfont/1.0.8/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="../../h-ui/static/h-ui.admin/skin/red/skin.css" id="skin"/>
+    <link rel="stylesheet" type="text/css" href="../../h-ui/static/h-ui.admin/css/style.css"/>
+
+    <style type="text/css">
+        .time-table {
+            table-layout: fixed;
+        }
+
+        .time-table th {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .time-table caption {
+            text-align: center;
+            font-size: large;
+        }
+
+        .time-table td {
+            text-align: center;
+            cursor: pointer;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .time-table td.oneline {
+            height: 40px;
+            line-height: 40px;
+        }
+
+        .time-table td.twoline {
+            height: 40px;
+            line-height: 20px;
+        }
+    </style>
+</head>
+<body>
+<table>
+    <tr>
+        <td colspan="1"></td>
+    </tr>
+</table>
+<div class="page-container">
+    <div class="text-c">
+        <span class="select-box inline radius">
+                <select class="select" id="class" disabled="disabled">
+                    <option value="">班级</option>
+                </select>
+            </span>
+        <button class="btn btn-success radius" onclick="loadTimetables()">
+            <i class="Hui-iconfont">&#xe665;</i> 查询
+        </button>
+    </div>
+    <div class="row cl mt-10" id="timetables"></div>
+</div>
+<script type="text/javascript" src="../../h-ui/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../../h-ui/lib/jquery.contextmenu/jquery.contextmenu.r2.js"></script>
+<script type="text/javascript" src="../../h-ui/lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="../../h-ui/static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="../../h-ui/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript">
+    // 初始化
+    $(function() {
+        loadTimetables();
+    });
+
+    function loadClass() {
+        $("#class").empty();
+        $("#class").append("<option value=''>班级</option>");
+        if ($('#grade').val()) {
+            $.ajax({
+                url : "manager/student/getClass",
+                type : "post",
+                data : {
+                    "gradeId" : $('#grade').val()
+                },
+                dataType : "json",
+                async : false,
+                success : function(data) {
+                    $.each(data, function(i, item) {
+                        $("#class").append("<option value='" + item.classId + "'>" + item.className + "</option>");
+                    });
+                    $('#class').removeAttr("disabled");
+                }
+            });
+        } else {
+            $('#class').attr("disabled", "disabled");
+        }
+    }
+
+    function toDownload() {
+        self.location.href = "manager/timetableDetail/downloadTemplate?id=${timetableId}";
+    }
+
+    function loadTimetables() {
+        $.ajax({
+            type : "post",
+            url : "manager/timetableDetail/getTimetables",
+            data : {
+                timetableId : '${timetableId}',
+                gradeId : $('#grade').val(),
+                classId : $('#class').val()
+            },
+            dataType : "json",
+            async : false,
+            success : function(result) {
+                $('#timetables').empty();
+                var html = '<!--startprint1-->';// 打印区域开始标记
+                if (result) {
+                    for (var i = 0; i < result.length; i++) {
+                        html += '<div class="col-sm-6 col-md-6 mb-10 timetable-container">';
+                        html += '<table class="table table-border table-bordered table-striped radius time-table">';
+                        html += '<tr><th colspan="8">' + result[i].classname + '</th></tr>';
+                        html += '<tr>';
+                        html += '<th>节\星期</th>';
+                        html += '<th>星期一</th>';
+                        html += '<th>星期二</th>';
+                        html += '<th>星期三</th>';
+                        html += '<th>星期四</th>';
+                        html += '<th>星期五</th>';
+                        html += '<th>星期六</th>';
+                        html += '<th>星期日</th>';
+                        html += '</tr>';
+                        var classTimetable = result[i].timetable;
+                        var maxPart = classTimetable.length / 7;
+                        var j = 0;
+                        for (var part = 1; part <= maxPart; part++) {
+                            html += '<tr>';
+                            html += '<td class="oneline">' + part + '</th>';
+                            for (var day = 1; day <= 7; day++) {
+                                if (classTimetable[j].courseName) {
+                                    if (classTimetable[j].teacherName) {
+                                        html += '<td class="twoline" onclick="showEdit(\'' + classTimetable[j].classId + '\',\'' + classTimetable[j].day + '\',\'' + classTimetable[j].part + '\')">' + classTimetable[j].courseName;
+                                        if (classTimetable[j].errorMsg) {
+                                            html += '<br /><span style="color: red">' + classTimetable[j].errorMsg + '</span></td>';
+                                        } else {
+                                            html += '<br />' + classTimetable[j].teacherName + '</td>';
+                                        }
+
+                                    } else {
+                                        html += '<td class="twoline" onclick="showEdit(\'' + classTimetable[j].classId + '\',\'' + classTimetable[j].day + '\',\'' + classTimetable[j].part + '\')">' + classTimetable[j].courseName + '<br />-</td>';
+                                    }
+                                } else {
+                                    html += '<td class="oneline" onclick="showEdit(\'' + classTimetable[j].classId + '\',\'' + classTimetable[j].day + '\',\'' + classTimetable[j].part + '\')">-</td>';
+                                }
+                                if (j < classTimetable.length) {
+                                    j++;
+                                }
+                            }
+                            html += '</tr>';
+                        }
+                        html += '</table></div>';
+                    }
+                }
+                html += '<!--endprint1-->';// 打印区域结束
+                $('#timetables').html(html);
+            }
+        });
+    }
+
+    function showEdit(classId, day, part, timetableId) {
+        layer_show('修改课表详细', 'manager/timetableDetail/toDetailEdit?classId=' + classId + '&day=' + day + '&part=' + part + '&timetableId=${timetableId}', '400', '320');
+    }
+
+    // 打印
+    function preview(oper) {
+        if (oper < 10) {
+            // 打印前画面的状态
+            var bdgradeId = $('#grade').val();
+            var bdclassId = $('#class').val();
+            var bdtitle = window.document.title;
+
+            var bdhtml = window.document.body.innerHTML;//获取当前页的html代码
+            var sprnstr = "<!--startprint" + oper + "-->";//设置打印开始区域
+            var eprnstr = "<!--endprint" + oper + "-->";//设置打印结束区域
+            var prnhtml = bdhtml.substring(bdhtml.indexOf(sprnstr) + 18); //从开始代码向后取html
+            prnhtml = prnhtml.substring(0, prnhtml.indexOf(eprnstr));//从结束代码向前取html
+            window.document.body.innerHTML = prnhtml;
+
+            // 设置打印网页的标题
+            window.document.title = '课程表';
+
+            // 每行显示一个课表，去掉col-*及自带的float样式，宽90%防止左右边框消失，水平居中  style="page-break-after: always;"
+            var c = 0;
+            $('.timetable-container').each(function(index, element) {
+                $(element).removeClass('col-sm-6').removeClass('col-md-6').css('width', '90%').css('margin', 'auto');
+                if ($(element).height() > 522) { // 为了一个课表不会被打印在两页上，高度大于522的占一页纸，（高度522正好是8节课，每页能打2个课表）
+                    $(element).css('page-break-after', 'always');
+                    c = 0;
+                } else {// 为了一个课表不会被打印在两页上，高度小等于522的每页打2个课表
+                    if (c % 2 == 1) {
+                        $(element).css('page-break-after', 'always');
+                        c = 0;
+                    } else {
+                        c++;
+                    }
+                }
+            });
+
+            window.print();
+
+            // 还原页面
+            window.document.title = bdtitle;
+            window.document.body.innerHTML = bdhtml;
+            $('#grade').val(bdgradeId);
+            $('#class').val(bdclassId)
+        } else {
+            window.print();
+        }
+    }
+</script>
+</body>
+</html>

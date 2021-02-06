@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.winsoar.cams.dao.ClassMapper">
+  <resultMap id="BaseResultMap" type="com.winsoar.cams.pojo.Class">
+    <id column="class_id" jdbcType="BIGINT" property="classId" />
+    <result column="class_name" jdbcType="VARCHAR" property="className" />
+    <result column="class_master_id" jdbcType="BIGINT" property="classMasterId" />
+    <result column="class_desc" jdbcType="BIGINT" property="classDesc" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    class_id, class_name, class_master_id, class_desc
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from class
+    where class_id = #{classId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from class
+    where class_id = #{classId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.winsoar.cams.pojo.Class">
+    insert into class (class_id, class_name, class_master_id, 
+      class_desc)
+    values (#{classId,jdbcType=BIGINT}, #{className,jdbcType=VARCHAR}, #{classMasterId,jdbcType=BIGINT}, 
+      #{classDesc,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.winsoar.cams.pojo.Class">
+    insert into class
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="classId != null">
+        class_id,
+      </if>
+      <if test="className != null">
+        class_name,
+      </if>
+      <if test="classMasterId != null">
+        class_master_id,
+      </if>
+      <if test="classDesc != null">
+        class_desc,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="classId != null">
+        #{classId,jdbcType=BIGINT},
+      </if>
+      <if test="className != null">
+        #{className,jdbcType=VARCHAR},
+      </if>
+      <if test="classMasterId != null">
+        #{classMasterId,jdbcType=BIGINT},
+      </if>
+      <if test="classDesc != null">
+        #{classDesc,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.winsoar.cams.pojo.Class">
+    update class
+    <set>
+      <if test="className != null">
+        class_name = #{className,jdbcType=VARCHAR},
+      </if>
+      <if test="classMasterId != null">
+        class_master_id = #{classMasterId,jdbcType=BIGINT},
+      </if>
+      <if test="classDesc != null">
+        class_desc = #{classDesc,jdbcType=BIGINT},
+      </if>
+    </set>
+    where class_id = #{classId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.winsoar.cams.pojo.Class">
+    update class
+    set class_name = #{className,jdbcType=VARCHAR},
+      class_master_id = #{classMasterId,jdbcType=BIGINT},
+      class_desc = #{classDesc,jdbcType=BIGINT}
+    where class_id = #{classId,jdbcType=BIGINT}
+  </update>
+</mapper>
