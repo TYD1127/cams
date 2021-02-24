@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE HTML>
-<html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta name="renderer" content="webkit|ie-comp|ie-stand">
@@ -29,7 +29,7 @@
                 <ul class="cl">
                     <li>超级管理员</li>
                     <li class="dropDown dropDown_hover">
-                        <a href="#" class="dropDown_A">admin <i class="Hui-iconfont">&#xe6d5;</i></a>
+                        <a href="#" th:text="${userName}" class="dropDown_A"> <i class="Hui-iconfont">&#xe6d5;</i></a>
                         <ul class="dropDown-menu menu radius box-shadow">
                             <li><a href="javascript:;" onClick="myselfinfo()">个人信息</a></li>
                             <li><a href="#">切换账户</a></li>
@@ -61,7 +61,7 @@
             <dd>
                 <ul>
                     <li><a data-href="/PersonnelInfo" data-title="人员信息" href="javascript:void(0)">人员信息</a></li>
-                    <li><a data-href="article-list.html" data-title="班级信息" href="javascript:void(0)">班级信息</a></li>
+                    <li><a data-href="/ClassInfo" data-title="班级信息" href="javascript:void(0)">班级信息</a></li>
                 </ul>
             </dd>
         </dl>
@@ -70,7 +70,7 @@
             <dt><i class="Hui-iconfont">&#xe6cf;</i> 成绩管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
             <dd>
                 <ul>
-                    <li><a data-href="charts-1.html" data-title="折线图" href="javascript:void(0)">成绩管理</a></li>
+                    <li><a data-href="result/toZycj" data-title="专业成绩管理" href="javascript:void(0)">专业成绩管理</a></li>
                 </ul>
             </dd>
         </dl>
@@ -86,7 +86,7 @@
             <dt><i class="Hui-iconfont">&#xe70d;</i> 饭卡管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
             <dd>
                 <ul>
-                    <li><a data-href="system-base.html" data-title="饭卡管理" href="javascript:void(0)">饭卡管理</a></li>
+                    <li><a data-href="foodcard/toFoodCard" data-title="饭卡管理" href="javascript:void(0)">饭卡管理</a></li>
                 </ul>
             </dd>
         </dl>
@@ -94,7 +94,7 @@
             <dt><i class="Hui-iconfont">&#xe665;</i> 国家考试查询<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
             <dd>
                 <ul>
-                    <li><a data-href="system-base.html" data-title="国家考试查询" href="javascript:void(0)">国家考试查询</a></li>
+                    <li><a data-href="http://cjcx.neea.edu.cn/html1/folder/20051/1156-1.htm" data-title="国家考试查询" href="javascript:void(0)">国家考试查询</a></li>
                 </ul>
             </dd>
         </dl>
@@ -102,7 +102,7 @@
             <dt><i class="Hui-iconfont">&#xe62e;</i> 教室管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
             <dd>
                 <ul>
-                    <li><a data-href="system-base.html" data-title="课程表" href="javascript:void(0)">教室管理</a></li>
+                    <li><a data-href="building/toJsgl" data-title="教室管理" href="javascript:void(0)">教室管理</a></li>
                 </ul>
             </dd>
         </dl>
@@ -146,10 +146,10 @@
 <script type="text/javascript" src="h-ui/static/h-ui/js/H-ui.min.js"></script>
 <script type="text/javascript" src="h-ui/static/h-ui.admin/js/H-ui.admin.js"></script>
 <!--/_footer 作为公共模版分离出去-->
-
 <!--请在下方写此页面业务相关的脚本-->
 <script type="text/javascript">
     $(function () {
+
         /*$("#min_title_list li").contextMenu('Huiadminmenu', {
             bindings: {
                 'closethis': function(t) {
@@ -212,8 +212,6 @@
     function member_add(title, url, w, h) {
         layer_show(title, url, w, h);
     }
-
-
 </script>
 </body>
 </html>

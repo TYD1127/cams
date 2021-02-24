@@ -72,10 +72,8 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
         }
         try {
             UsernamePasswordAuthenticationToken authentication = getAuthentication(request, response);
-
             SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(request, response);
-
         } catch (ExpiredJwtException e) {
             response.setHeader("Content-type", "text/html;charset=UTF-8");
             //json.put("status", "-2");
@@ -123,7 +121,6 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
     }
 
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request, HttpServletResponse response) {
-
         String token = request.getHeader(JwtUtil.AUTHORIZATION);
         if (StringUtils.isBlank(token) ){
             Cookie[] cookies = request.getCookies();
