@@ -26,10 +26,8 @@
              p.person_type,
              p.person_desc,
              p.mobile,
-             p.class_id,
-             f.card_num AS card_num
+             p.class_id
         from person p
-            inner join foodcard f on p.card_num = f.foodcard_id
         where p.person_type = 1
             order by person_id desc
     </select>
@@ -40,11 +38,9 @@
         p.mobile,
         p.person_name,
         p.person_id,
-        f.card_num AS card_num,
         c.class_name
         from person p
          inner join classtable c on c.class_id=p.class_id
-         inner join foodcard f on p.card_num = f.foodcard_id
         where p.person_type = 2
         order by c.class_name,p.person_id
     </select>
