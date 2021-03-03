@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.winsoar.cams.dao.CourseDao">
+
+    <resultMap type="com.winsoar.cams.entity.Course" id="CourseMap">
+        <result property="courseId" column="course_id" jdbcType="INTEGER"/>
+        <result property="courseName" column="course_name" jdbcType="VARCHAR"/>
+        <result property="createDate" column="create_date" jdbcType="TIMESTAMP"/>
+        <result property="enable" column="enable" jdbcType="INTEGER"/>
+        <result property="specialCR" column="special_c_r" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="CourseMap">
+        select
+          course_id, course_name, create_date, enable, special_c_r
+        from cams.course
+        where course_id = #{courseId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="CourseMap">
+        select
+          course_id, course_name, create_date, enable, special_c_r
+        from cams.course
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="CourseMap">
+        select
+        course_id, course_name, create_date, enable, special_c_r
+        from cams.course
+        <where>
+            <if test="courseId != null">
+                and course_id = #{courseId}
+            </if>
+            <if test="courseName != null and courseName != ''">
+                and course_name = #{courseName}
+            </if>
+            <if test="createDate != null">
+                and create_date = #{createDate}
+            </if>
+            <if test="enable != null">
+                and enable = #{enable}
+            </if>
+            <if test="specialCR != null">
+                and special_c_r = #{specialCR}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="courseId" useGeneratedKeys="true">
+        insert into cams.course(course_name, create_date, enable, special_c_r)
+        values (#{courseName}, #{createDate}, #{enable}, #{specialCR})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="courseId" useGeneratedKeys="true">
+        insert into cams.course(course_name, create_date, enable, special_c_r)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.courseName}, #{entity.createDate}, #{entity.enable}, #{entity.specialCR})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="courseId" useGeneratedKeys="true">
+        insert into cams.course(course_name, create_date, enable, special_c_r)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.courseName}, #{entity.createDate}, #{entity.enable}, #{entity.specialCR})
+        </foreach>
+        on duplicate key update
+        course_name = values(course_name) , create_date = values(create_date) , enable = values(enable) , special_c_r =
+        values(special_c_r)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update cams.course
+        <set>
+            <if test="courseName != null and courseName != ''">
+                course_name = #{courseName},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate},
+            </if>
+            <if test="enable != null">
+                enable = #{enable},
+            </if>
+            <if test="specialCR != null">
+                special_c_r = #{specialCR},
+            </if>
+        </set>
+        where course_id = #{courseId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from cams.course where course_id = #{courseId}
+    </delete>
+
+</mapper>
+

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.winsoar.cams.dao.ClassroomDao">
+
+    <resultMap type="com.winsoar.cams.entity.Classroom" id="ClassroomMap">
+        <result property="classRoomId" column="class_room_id" jdbcType="INTEGER"/>
+        <result property="classRoomName" column="class_room_name" jdbcType="VARCHAR"/>
+        <result property="buildingId" column="building_id" jdbcType="INTEGER"/>
+        <result property="classRoomNum" column="class_room_num" jdbcType="VARCHAR"/>
+        <result property="classRoomType" column="class_room_type" jdbcType="VARCHAR"/>
+        <result property="createUser" column="create_user" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="isDetele" column="is_detele" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ClassroomMap">
+        select
+          class_room_id, class_room_name, building_id, class_room_num, class_room_type, create_user, create_time, is_detele
+        from cams.classroom
+        where class_room_id = #{classRoomId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ClassroomMap">
+        select
+          class_room_id, class_room_name, building_id, class_room_num, class_room_type, create_user, create_time, is_detele
+        from cams.classroom
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="ClassroomMap">
+        select
+        class_room_id, class_room_name, building_id, class_room_num, class_room_type, create_user, create_time,
+        is_detele
+        from cams.classroom
+        <where>
+            <if test="classRoomId != null">
+                and class_room_id = #{classRoomId}
+            </if>
+            <if test="classRoomName != null and classRoomName != ''">
+                and class_room_name = #{classRoomName}
+            </if>
+            <if test="buildingId != null">
+                and building_id = #{buildingId}
+            </if>
+            <if test="classRoomNum != null and classRoomNum != ''">
+                and class_room_num = #{classRoomNum}
+            </if>
+            <if test="classRoomType != null and classRoomType != ''">
+                and class_room_type = #{classRoomType}
+            </if>
+            <if test="createUser != null">
+                and create_user = #{createUser}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="isDetele != null">
+                and is_detele = #{isDetele}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="classRoomId" useGeneratedKeys="true">
+        insert into cams.classroom(class_room_name, building_id, class_room_num, class_room_type, create_user, create_time, is_detele)
+        values (#{classRoomName}, #{buildingId}, #{classRoomNum}, #{classRoomType}, #{createUser}, #{createTime}, #{isDetele})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="classRoomId" useGeneratedKeys="true">
+        insert into cams.classroom(class_room_name, building_id, class_room_num, class_room_type, create_user,
+        create_time, is_detele)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.classRoomName}, #{entity.buildingId}, #{entity.classRoomNum}, #{entity.classRoomType},
+            #{entity.createUser}, #{entity.createTime}, #{entity.isDetele})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="classRoomId" useGeneratedKeys="true">
+        insert into cams.classroom(class_room_name, building_id, class_room_num, class_room_type, create_user,
+        create_time, is_detele)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.classRoomName}, #{entity.buildingId}, #{entity.classRoomNum}, #{entity.classRoomType},
+            #{entity.createUser}, #{entity.createTime}, #{entity.isDetele})
+        </foreach>
+        on duplicate key update
+        class_room_name = values(class_room_name) , building_id = values(building_id) , class_room_num =
+        values(class_room_num) , class_room_type = values(class_room_type) , create_user = values(create_user) ,
+        create_time = values(create_time) , is_detele = values(is_detele)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update cams.classroom
+        <set>
+            <if test="classRoomName != null and classRoomName != ''">
+                class_room_name = #{classRoomName},
+            </if>
+            <if test="buildingId != null">
+                building_id = #{buildingId},
+            </if>
+            <if test="classRoomNum != null and classRoomNum != ''">
+                class_room_num = #{classRoomNum},
+            </if>
+            <if test="classRoomType != null and classRoomType != ''">
+                class_room_type = #{classRoomType},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="isDetele != null">
+                is_detele = #{isDetele},
+            </if>
+        </set>
+        where class_room_id = #{classRoomId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from cams.classroom where class_room_id = #{classRoomId}
+    </delete>
+
+</mapper>
+

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.winsoar.cams.dao.PersonDao">
+
+    <resultMap type="com.winsoar.cams.entity.Person" id="PersonMap">
+        <result property="personId" column="person_id" jdbcType="INTEGER"/>
+        <result property="personName" column="person_name" jdbcType="VARCHAR"/>
+        <result property="personType" column="person_type" jdbcType="INTEGER"/>
+        <result property="personDesc" column="person_desc" jdbcType="INTEGER"/>
+        <result property="mobile" column="mobile" jdbcType="VARCHAR"/>
+        <result property="classId" column="class_id" jdbcType="INTEGER"/>
+        <result property="cardNum" column="card_num" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="PersonMap">
+        select
+          person_id, person_name, person_type, person_desc, mobile, class_id, card_num
+        from cams.person
+        where person_id = #{personId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="PersonMap">
+        select
+          person_id, person_name, person_type, person_desc, mobile, class_id, card_num
+        from cams.person
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="PersonMap">
+        select
+        person_id, person_name, person_type, person_desc, mobile, class_id, card_num
+        from cams.person
+        <where>
+            <if test="personId != null">
+                and person_id = #{personId}
+            </if>
+            <if test="personName != null and personName != ''">
+                and person_name = #{personName}
+            </if>
+            <if test="personType != null">
+                and person_type = #{personType}
+            </if>
+            <if test="personDesc != null">
+                and person_desc = #{personDesc}
+            </if>
+            <if test="mobile != null and mobile != ''">
+                and mobile = #{mobile}
+            </if>
+            <if test="classId != null">
+                and class_id = #{classId}
+            </if>
+            <if test="cardNum != null and cardNum != ''">
+                and card_num = #{cardNum}
+            </if>
+        </where>
+    </select>
+    <select id="checkname" resultType="java.util.Map">
+        SELECT p.person_name
+        FROM  person p
+        where p.person_name=#{personName}
+    </select>
+    <select id="checkmobile" resultType="java.util.Map">
+          SELECT p.person_name
+        FROM  person p
+        where p.mobile=#{mobile}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="personId" useGeneratedKeys="true">
+        insert into cams.person(person_name, person_type, person_desc, mobile, class_id, card_num)
+        values (#{personName}, #{personType}, #{personDesc}, #{mobile}, #{classId}, #{cardNum})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="personId" useGeneratedKeys="true">
+        insert into cams.person(person_name, person_type, person_desc, mobile, class_id, card_num)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.personName}, #{entity.personType}, #{entity.personDesc}, #{entity.mobile}, #{entity.classId},
+            #{entity.cardNum})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="personId" useGeneratedKeys="true">
+        insert into cams.person(person_name, person_type, person_desc, mobile, class_id, card_num)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.personName}, #{entity.personType}, #{entity.personDesc}, #{entity.mobile}, #{entity.classId},
+            #{entity.cardNum})
+        </foreach>
+        on duplicate key update
+        person_name = values(person_name) , person_type = values(person_type) , person_desc = values(person_desc) ,
+        mobile = values(mobile) , class_id = values(class_id) , card_num = values(card_num)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update cams.person
+        <set>
+            <if test="personName != null and personName != ''">
+                person_name = #{personName},
+            </if>
+            <if test="personType != null">
+                person_type = #{personType},
+            </if>
+            <if test="personDesc != null">
+                person_desc = #{personDesc},
+            </if>
+            <if test="mobile != null and mobile != ''">
+                mobile = #{mobile},
+            </if>
+            <if test="classId != null">
+                class_id = #{classId},
+            </if>
+            <if test="cardNum != null and cardNum != ''">
+                card_num = #{cardNum},
+            </if>
+        </set>
+        where person_id = #{personId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from cams.person where person_id = #{personId}
+    </delete>
+
+</mapper>
+

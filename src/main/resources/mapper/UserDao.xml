@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.winsoar.cams.dao.UserDao">
+
+    <resultMap type="com.winsoar.cams.entity.User" id="UserMap">
+        <result property="account" column="account" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="usertype" column="usertype" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="UserMap">
+        select
+          account, password, username, usertype
+        from cams.user
+        where account = #{account}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="UserMap">
+        select
+          account, password, username, usertype
+        from cams.user
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="UserMap">
+        select
+        account, password, username, usertype
+        from cams.user
+        <where>
+            <if test="account != null and account != ''">
+                and account = #{account}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="usertype != null">
+                and usertype = #{usertype}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="account" useGeneratedKeys="true">
+        insert into cams.user(account, password, username, usertype)
+        values (#{account},#{password}, #{username}, #{usertype})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="account" useGeneratedKeys="true">
+        insert into cams.user(password, username, usertype)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.password}, #{entity.username}, #{entity.usertype})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="account" useGeneratedKeys="true">
+        insert into cams.user(password, username, usertype)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.password}, #{entity.username}, #{entity.usertype})
+        </foreach>
+        on duplicate key update
+        password = values(password) , username = values(username) , usertype = values(usertype)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update cams.user
+        <set>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="usertype != null">
+                usertype = #{usertype},
+            </if>
+        </set>
+        where account = #{account}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from cams.user where account = #{account}
+    </delete>
+
+</mapper>
+

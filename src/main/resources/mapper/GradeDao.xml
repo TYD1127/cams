@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.winsoar.cams.dao.GradeDao">
+
+    <resultMap type="com.winsoar.cams.entity.Grade" id="GradeMap">
+        <result property="gradeId" column="grade_id" jdbcType="INTEGER"/>
+        <result property="gradeName" column="grade_name" jdbcType="VARCHAR"/>
+        <result property="gradleLevel" column="gradle_level" jdbcType="VARCHAR"/>
+        <result property="createDate" column="create_date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="GradeMap">
+        select
+          grade_id, grade_name, gradle_level, create_date
+        from cams.grade
+        where grade_id = #{gradeId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="GradeMap">
+        select
+          grade_id, grade_name, gradle_level, create_date
+        from cams.grade
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="GradeMap">
+        select
+        grade_id, grade_name, gradle_level, create_date
+        from cams.grade
+        <where>
+            <if test="gradeId != null">
+                and grade_id = #{gradeId}
+            </if>
+            <if test="gradeName != null and gradeName != ''">
+                and grade_name = #{gradeName}
+            </if>
+            <if test="gradleLevel != null and gradleLevel != ''">
+                and gradle_level = #{gradleLevel}
+            </if>
+            <if test="createDate != null">
+                and create_date = #{createDate}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="gradeId" useGeneratedKeys="true">
+        insert into cams.grade(grade_name, gradle_level, create_date)
+        values (#{gradeName}, #{gradleLevel}, #{createDate})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="gradeId" useGeneratedKeys="true">
+        insert into cams.grade(grade_name, gradle_level, create_date)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.gradeName}, #{entity.gradleLevel}, #{entity.createDate})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="gradeId" useGeneratedKeys="true">
+        insert into cams.grade(grade_name, gradle_level, create_date)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.gradeName}, #{entity.gradleLevel}, #{entity.createDate})
+        </foreach>
+        on duplicate key update
+        grade_name = values(grade_name) , gradle_level = values(gradle_level) , create_date = values(create_date)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update cams.grade
+        <set>
+            <if test="gradeName != null and gradeName != ''">
+                grade_name = #{gradeName},
+            </if>
+            <if test="gradleLevel != null and gradleLevel != ''">
+                gradle_level = #{gradleLevel},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate},
+            </if>
+        </set>
+        where grade_id = #{gradeId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from cams.grade where grade_id = #{gradeId}
+    </delete>
+
+</mapper>
+

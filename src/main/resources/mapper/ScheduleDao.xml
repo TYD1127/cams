@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.winsoar.cams.dao.ScheduleDao">
+
+    <resultMap type="com.winsoar.cams.entity.Schedule" id="ScheduleMap">
+        <result property="scheduleId" column="schedule_id" jdbcType="INTEGER"/>
+        <result property="scheduleName" column="schedule_name" jdbcType="VARCHAR"/>
+        <result property="schoolYear" column="school_year" jdbcType="VARCHAR"/>
+        <result property="term" column="term" jdbcType="VARCHAR"/>
+        <result property="creatTime" column="creat_time" jdbcType="TIMESTAMP"/>
+        <result property="createUser" column="create_user" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ScheduleMap">
+        select
+          schedule_id, schedule_name, school_year, term, creat_time, create_user
+        from cams.schedule
+        where schedule_id = #{scheduleId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ScheduleMap">
+        select
+          schedule_id, schedule_name, school_year, term, creat_time, create_user
+        from cams.schedule
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="ScheduleMap">
+        select
+        schedule_id, schedule_name, school_year, term, creat_time, create_user
+        from cams.schedule
+        <where>
+            <if test="scheduleId != null">
+                and schedule_id = #{scheduleId}
+            </if>
+            <if test="scheduleName != null and scheduleName != ''">
+                and schedule_name = #{scheduleName}
+            </if>
+            <if test="schoolYear != null and schoolYear != ''">
+                and school_year = #{schoolYear}
+            </if>
+            <if test="term != null and term != ''">
+                and term = #{term}
+            </if>
+            <if test="creatTime != null">
+                and creat_time = #{creatTime}
+            </if>
+            <if test="createUser != null">
+                and create_user = #{createUser}
+            </if>
+        </where>
+    </select>
+    <!--    查询课表详细-->
+    <select id="queryScheduleAll" resultType="java.util.Map">
+            SELECT CONCAT(g.grade_name,c.class_name) AS class_name,
+                   cr.course_name,
+                   c2.class_room_name,
+                   p.person_name,
+                   ds.day,
+                   ds.part
+            FROM `detailed_schedule` ds
+            INNER JOIN `course` cr ON cr.course_id = ds.course_id
+            INNER JOIN classtable c ON ds.class_id = c.class_id
+            INNER JOIN person p ON ds.person_id = p.person_id
+            INNER JOIN grade g ON c.grade_id = g.grade_id
+            INNER JOIN classroom c2 ON ds.class_room_id = c2.class_room_id
+            INNER JOIN `schedule` s ON ds.schedule_id = s.schedule_id
+            WHERE CURDATE() BETWEEN STR_TO_DATE(CONCAT(s.school_year,IF(s.term=1,'02-01','09-01')),'%Y%m-%d')
+                    AND STR_TO_DATE(CONCAT(s.school_year,IF(s.term=1,'07-01','12-31')),'%Y%m-%d')
+                    AND c.`class_id` = 1
+            ORDER BY ds.day,ds.part
+     </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="scheduleId" useGeneratedKeys="true">
+        insert into cams.schedule(schedule_name, school_year, term, creat_time, create_user)
+        values (#{scheduleName}, #{schoolYear}, #{term}, #{creatTime}, #{createUser})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="scheduleId" useGeneratedKeys="true">
+        insert into cams.schedule(schedule_name, school_year, term, creat_time, create_user)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.scheduleName}, #{entity.schoolYear}, #{entity.term}, #{entity.creatTime}, #{entity.createUser})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="scheduleId" useGeneratedKeys="true">
+        insert into cams.schedule(schedule_name, school_year, term, creat_time, create_user)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.scheduleName}, #{entity.schoolYear}, #{entity.term}, #{entity.creatTime}, #{entity.createUser})
+        </foreach>
+        on duplicate key update
+        schedule_name = values(schedule_name) , school_year = values(school_year) , term = values(term) , creat_time =
+        values(creat_time) , create_user = values(create_user)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update cams.schedule
+        <set>
+            <if test="scheduleName != null and scheduleName != ''">
+                schedule_name = #{scheduleName},
+            </if>
+            <if test="schoolYear != null and schoolYear != ''">
+                school_year = #{schoolYear},
+            </if>
+            <if test="term != null and term != ''">
+                term = #{term},
+            </if>
+            <if test="creatTime != null">
+                creat_time = #{creatTime},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser},
+            </if>
+        </set>
+        where schedule_id = #{scheduleId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from cams.schedule where schedule_id = #{scheduleId}
+    </delete>
+
+</mapper>
+

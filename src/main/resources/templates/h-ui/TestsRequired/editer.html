@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <base href="/">
+    <title>成绩</title>
+    <link rel="stylesheet" type="text/css" href="h-ui/static/h-ui/css/H-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="h-ui/static/h-ui.admin/css/H-ui.admin.css"/>
+    <link rel="stylesheet" type="text/css" href="h-ui/lib/Hui-iconfont/1.0.8/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="h-ui/static/h-ui.admin/skin/red/skin.css" id="skin"/>
+    <link rel="stylesheet" type="text/css" href="h-ui/static/h-ui.admin/css/style.css"/>
+</head>
+<body>
+<div class="mt-5">
+    <table class="table table-border table-bordered table-hover table-bg table-sort">
+        <thead>
+        <tr class="text-c">
+            <th width="18%">科目名称</th>
+            <th width="20%">成绩</th>
+            <th width="21%">学年</th>
+            <th width="21%">是否通过</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="r:${result}" : class="text-c">
+            <td th:text="${r.courseName}"></td>
+            <td th:text="${r.Score}"></td>
+            <td th:text="${r.YEAR}"></td>
+            <td th:switch="${r.sftg}">
+                <p th:case="1" style="color: #00b7ee">已通过</p>
+                <p th:case="0" style="color: red">未通过</p>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript" src="h-ui/lib/jquery/1.9.1/jquery.js"></script>
+<script type="text/javascript" src="h-ui/lib/jquery.contextmenu/jquery.contextmenu.r2.js"></script>
+<script type="text/javascript" src="h-ui/lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="h-ui/static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="h-ui/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="h-ui/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="h-ui/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="h-ui/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript" src="h-ui/lib/datatables/1.10.15/jquery.dataTables.js"></script>
+</body>
+</html>

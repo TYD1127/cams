@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.winsoar.cams.dao.ClasstableDao">
+
+    <resultMap type="com.winsoar.cams.entity.Classtable" id="ClasstableMap">
+        <result property="classId" column="class_id" jdbcType="INTEGER"/>
+        <result property="className" column="class_name" jdbcType="VARCHAR"/>
+        <result property="classMasterId" column="class_master_id" jdbcType="INTEGER"/>
+        <result property="classDesc" column="class_desc" jdbcType="INTEGER"/>
+        <result property="gradeId" column="grade_id" jdbcType="INTEGER"/>
+        <result property="createUser" column="create_user" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ClasstableMap">
+        select
+          class_id, class_name, class_master_id, class_desc, grade_id, create_user
+        from cams.classtable
+        where class_id = #{classId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ClasstableMap">
+        select
+          class_id, class_name, class_master_id, class_desc, grade_id, create_user
+        from cams.classtable
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="ClasstableMap">
+        select
+        class_id, class_name, class_master_id, class_desc, grade_id, create_user
+        from cams.classtable
+        <where>
+            <if test="classId != null">
+                and class_id = #{classId}
+            </if>
+            <if test="className != null and className != ''">
+                and class_name = #{className}
+            </if>
+            <if test="classMasterId != null">
+                and class_master_id = #{classMasterId}
+            </if>
+            <if test="classDesc != null">
+                and class_desc = #{classDesc}
+            </if>
+            <if test="gradeId != null">
+                and grade_id = #{gradeId}
+            </if>
+            <if test="createUser != null">
+                and create_user = #{createUser}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryAllInfo" resultType="java.util.Map">
+       SELECT   c.class_name  AS className,
+                g.grade_name  AS gradeName,
+                p.person_name AS masterName,
+                c.class_id    AS Cid
+        FROM classtable c
+                INNER JOIN grade g ON c.grade_id = g.grade_id
+                INNER JOIN person p ON c.class_master_id = p.person_id
+        ORDER BY c.class_id;
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="classId" useGeneratedKeys="true">
+        insert into cams.classtable(class_name, class_master_id, class_desc, grade_id, create_user)
+        values (#{className}, #{classMasterId}, #{classDesc}, #{gradeId}, #{createUser})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="classId" useGeneratedKeys="true">
+        insert into cams.classtable(class_name, class_master_id, class_desc, grade_id, create_user)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.className}, #{entity.classMasterId}, #{entity.classDesc}, #{entity.gradeId}, #{entity.createUser})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="classId" useGeneratedKeys="true">
+        insert into cams.classtable(class_name, class_master_id, class_desc, grade_id, create_user)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.className}, #{entity.classMasterId}, #{entity.classDesc}, #{entity.gradeId}, #{entity.createUser})
+        </foreach>
+        on duplicate key update
+        class_name = values(class_name) , class_master_id = values(class_master_id) , class_desc = values(class_desc) ,
+        grade_id = values(grade_id) , create_user = values(create_user)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update cams.classtable
+        <set>
+            <if test="className != null and className != ''">
+                class_name = #{className},
+            </if>
+            <if test="classMasterId != null">
+                class_master_id = #{classMasterId},
+            </if>
+            <if test="classDesc != null">
+                class_desc = #{classDesc},
+            </if>
+            <if test="gradeId != null">
+                grade_id = #{gradeId},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser},
+            </if>
+        </set>
+        where class_id = #{classId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from cams.classtable where class_id = #{classId}
+    </delete>
+
+</mapper>
+

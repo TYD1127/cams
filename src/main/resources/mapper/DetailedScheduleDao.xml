@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.winsoar.cams.dao.DetailedScheduleDao">
+
+    <resultMap type="com.winsoar.cams.entity.DetailedSchedule" id="DetailedScheduleMap">
+        <result property="detailedScheduleId" column="detailed_schedule_id" jdbcType="INTEGER"/>
+        <result property="scheduleId" column="schedule_id" jdbcType="INTEGER"/>
+        <result property="classId" column="class_id" jdbcType="INTEGER"/>
+        <result property="classRoomId" column="class_room_id" jdbcType="INTEGER"/>
+        <result property="personId" column="person_id" jdbcType="INTEGER"/>
+        <result property="courseId" column="course_id" jdbcType="INTEGER"/>
+        <result property="day" column="day" jdbcType="INTEGER"/>
+        <result property="part" column="part" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="DetailedScheduleMap">
+        select
+          detailed_schedule_id, schedule_id, class_id, class_room_id, person_id, course_id, day, part
+        from cams.detailed_schedule
+        where detailed_schedule_id = #{detailedScheduleId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="DetailedScheduleMap">
+        select
+          detailed_schedule_id, schedule_id, class_id, class_room_id, person_id, course_id, day, part
+        from cams.detailed_schedule
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="DetailedScheduleMap">
+        select
+        detailed_schedule_id, schedule_id, class_id, class_room_id, person_id, course_id, day, part
+        from cams.detailed_schedule
+        <where>
+            <if test="detailedScheduleId != null">
+                and detailed_schedule_id = #{detailedScheduleId}
+            </if>
+            <if test="scheduleId != null">
+                and schedule_id = #{scheduleId}
+            </if>
+            <if test="classId != null">
+                and class_id = #{classId}
+            </if>
+            <if test="classRoomId != null">
+                and class_room_id = #{classRoomId}
+            </if>
+            <if test="personId != null">
+                and person_id = #{personId}
+            </if>
+            <if test="courseId != null">
+                and course_id = #{courseId}
+            </if>
+            <if test="day != null">
+                and day = #{day}
+            </if>
+            <if test="part != null">
+                and part = #{part}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="detailedScheduleId" useGeneratedKeys="true">
+        insert into cams.detailed_schedule(schedule_id, class_id, class_room_id, person_id, course_id, day, part)
+        values (#{scheduleId}, #{classId}, #{classRoomId}, #{personId}, #{courseId}, #{day}, #{part})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="detailedScheduleId" useGeneratedKeys="true">
+        insert into cams.detailed_schedule(schedule_id, class_id, class_room_id, person_id, course_id, day, part)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.scheduleId}, #{entity.classId}, #{entity.classRoomId}, #{entity.personId}, #{entity.courseId},
+            #{entity.day}, #{entity.part})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="detailedScheduleId" useGeneratedKeys="true">
+        insert into cams.detailed_schedule(schedule_id, class_id, class_room_id, person_id, course_id, day, part)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.scheduleId}, #{entity.classId}, #{entity.classRoomId}, #{entity.personId}, #{entity.courseId},
+            #{entity.day}, #{entity.part})
+        </foreach>
+        on duplicate key update
+        schedule_id = values(schedule_id) , class_id = values(class_id) , class_room_id = values(class_room_id) ,
+        person_id = values(person_id) , course_id = values(course_id) , day = values(day) , part = values(part)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update cams.detailed_schedule
+        <set>
+            <if test="scheduleId != null">
+                schedule_id = #{scheduleId},
+            </if>
+            <if test="classId != null">
+                class_id = #{classId},
+            </if>
+            <if test="classRoomId != null">
+                class_room_id = #{classRoomId},
+            </if>
+            <if test="personId != null">
+                person_id = #{personId},
+            </if>
+            <if test="courseId != null">
+                course_id = #{courseId},
+            </if>
+            <if test="day != null">
+                day = #{day},
+            </if>
+            <if test="part != null">
+                part = #{part},
+            </if>
+        </set>
+        where detailed_schedule_id = #{detailedScheduleId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from cams.detailed_schedule where detailed_schedule_id = #{detailedScheduleId}
+    </delete>
+
+</mapper>
+

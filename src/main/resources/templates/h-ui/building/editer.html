@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <base href="/">
+    <title>教室管理</title>
+    <link rel="stylesheet" type="text/css" href="h-ui/static/h-ui/css/H-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="h-ui/static/h-ui.admin/css/H-ui.admin.css"/>
+    <link rel="stylesheet" type="text/css" href="h-ui/lib/Hui-iconfont/1.0.8/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="h-ui/static/h-ui.admin/skin/red/skin.css" id="skin"/>
+    <link rel="stylesheet" type="text/css" href="h-ui/static/h-ui.admin/css/style.css"/>
+</head>
+<body>
+<div class="mt-5 pd-10">
+    <table class="table table-border table-bordered table-hover table-bg table-sort">
+        <thead>
+        <tr class="text-c">
+            <th width="18%">教室ID</th>
+            <th width="20%">教室名称</th>
+            <th width="21%">排课数量</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="r:${jsinfo}" : class="text-c">
+            <td th:text="${r.jsid}"></td>
+            <td th:text="${r.jsname}"></td>
+            <td th:if="${r.pknum==0}">
+                <p style="color: #00b7ee">空教室未排课</p>
+            </td>
+            <td th:if="${r.pknum>0}">
+                <p th:text="${r.pknum}" style="color: red"></p>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript" src="h-ui/lib/jquery/1.9.1/jquery.js"></script>
+<script type="text/javascript" src="h-ui/lib/jquery.contextmenu/jquery.contextmenu.r2.js"></script>
+<script type="text/javascript" src="h-ui/lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="h-ui/static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="h-ui/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="h-ui/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="h-ui/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="h-ui/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript" src="h-ui/lib/datatables/1.10.15/jquery.dataTables.js"></script>
+</body>
+</html>

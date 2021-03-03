@@ -1,0 +1,185 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base href="/">
+    <title>教室管理</title>
+    <script type="text/javascript" src="h-ui/lib/html5shiv.js"></script>
+    <script type="text/javascript" src="h-ui/lib/respond.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="h-ui/static/h-ui/css/H-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="h-ui/static/h-ui.admin/css/H-ui.admin.css"/>
+    <link rel="stylesheet" type="text/css" href="h-ui/lib/Hui-iconfont/1.0.8/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="h-ui/static/h-ui.admin/skin/red/skin.css" id="skin"/>
+    <link rel="stylesheet" type="text/css" href="h-ui/static/h-ui.admin/css/style.css"/>
+</head>
+<body>
+<nav class="breadcrumb">
+    <i class="Hui-iconfont">&#xe67f;</i> 首页
+    <span class="c-gray en">&gt;</span>
+    教室管理
+    <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px"
+       href="javascript:location.replace(location.href);" title="刷新">
+        <i class="Hui-iconfont">&#xe68f;</i>
+    </a>
+</nav>
+<div class="page-container">
+    <div class="cl pd-5 bg-1 bk-gray text-c">
+            <span class="l">
+                    <a class="btn btn-primary radius" href="javascript:;" id="addBtn"
+                       onclick="layer_show('添加教学楼','manager/grade/toAddGrade',600,400)">
+                        <i class="Hui-iconfont">&#xe600;</i>添加教学楼
+                    </a>
+                <input type="hidden" value="">
+            </span>
+
+        <span class="r">共有数据：<strong><span id="total"></span></strong> 条
+        </span>
+    </div>
+    <div class="mt-20">
+        <table class="table table-border table-bordered table-bg table-hover table-sort table-responsive"
+               id="gradeListForm">
+            <thead>
+            <tr class="text-c">
+                <th class="col-md-1 col-sm-1"><input type="checkbox" id="allChoose"></th>
+                <th class="col-md-2 col-sm-2">序号</th>
+                <th class="col-md-3 col-sm-3">教学楼名</th>
+                <th class="col-md-3 col-sm-3">教室数量</th>
+                <th class="col-md-3 col-sm-3">操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<!--请在下方写此页面业务相关的脚本static/h-ui/lib/jquery/1.9.1/jquery.js-->
+<script type="text/javascript" src="h-ui/lib/jquery/1.9.1/jquery.js"></script>
+<script type="text/javascript" src="h-ui/lib/jquery.contextmenu/jquery.contextmenu.r2.js"></script>
+<script type="text/javascript" src="h-ui/lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="h-ui/static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="h-ui/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="h-ui/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="h-ui/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="h-ui/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript" src="h-ui/lib/datatables/1.10.15/jquery.dataTables.js"></script>
+<script type="text/javascript">
+    //每页显示数据条数监听事件
+    $('#gradeListForm').on('length.dt', function () {
+        table.ajax.reload();
+    });
+
+    // 查询重新加载ajax
+    function gradeList_check() {
+        table.ajax.reload();
+    }
+
+    // 清空查询条件
+    function serchInfo_empty() {
+        $("#checkGradeName").val("");
+        // 重新加载ajax
+        table.ajax.reload();
+    }
+
+    // 分页查询
+    var table;
+    $(function () {
+        //初始化表格
+        table = $("#gradeListForm").dataTable({
+            autoWidth: false, //禁用自动调整列宽
+            stripeClasses: ["odd", "even"], //为奇偶行加上样式，兼容不支持CSS伪类的场合
+            processing: true, //隐藏加载提示,自行处理
+            serverSide: true, //启用服务器端分页
+            orderMulti: false, //启用多列排序
+            searching: false,//开启本地搜索
+            searchable: true,// 全局的搜索条件
+            order: [0], //取消默认排序查询,否则复选框一列会出现小箭头
+            renderer: "bootstrap", //渲染样式：Bootstrap和jquery-ui (renderer :n. 渲染器；描绘器)
+            pagingType: "simple_numbers", //分页样式：simple,simple_numbers,full,full_numbers
+            // 在第二列添加序列
+            "fnDrawCallback": function () {
+                var api = this.api();
+                var startIndex = api.context[0]._iDisplayStart;//获取到本页开始的条数
+                api.column(1).nodes().each(function (cell, i) {
+                    cell.innerHTML = startIndex + i + 1;
+                });
+            },
+            ajax: function (data, callback, settings, aoData) {
+                $.ajax({
+                    type: "POST",
+                    url: "building/getInfo",
+                    cache: false, //禁用缓存
+                    data: {
+                        "checkGradeName": $("#checkGradeName").val(),
+                        "pageSize": data.length,//页面显示记录条数，在页面显示每页显示多少项的时候
+                        "row": data.start,//开始的记录序号
+                        "page": (data.start / data.length) + 1
+                    },
+                    contentType: "application/x-www-form-urlencoded; charset=utf-8",
+                    dataType: "json",
+                    success: function (result) {
+                        console.log(result);
+                        setTimeout(function () {
+                            //封装返回数据
+                            var returnData = {};
+                            returnData.draw = data.draw;//这里直接自行返回了draw计数器,应该由后台返回
+                            returnData.recordsTotal = result.length;//返回数据全部记录
+                            $("#total").html(result.length);
+                            returnData.recordsFiltered = result.length;//后台不实现过滤功能，每次查询均视作全部结果
+                            returnData.data = result;//返回的数据列表
+                            callback(returnData);
+                        }, 0);
+                    }
+                });
+            },
+            //列表表头字段
+            columns: [{
+                "sClass": "text-c col-md-1 col-sm-1",
+                "data": "Bid",
+                "bSortable": false,
+                "render": function (data, type, full, meta) {
+                    return '<input type="checkbox" class="checkchild"  name="gradeIds" orderNum=' + full.Cid + ' value=' + data + ' onclick="choose(this)">';
+                }
+            }, {
+                "sClass": "text-c col-md-2 col-sm-2",
+                "data": null,
+                "bSortable": false
+            }, {
+                "sClass": "text-c col-md-3 col-sm-3",
+                "data": "Bname",
+                "bSortable": false,
+                "render": function (data) {
+                    if (data) {
+                        return data
+                    } else {
+                        return "--";
+                    }
+                }
+            }, {
+                "sClass": "text-c col-md-3 col-sm-3",
+                "data": "Bnum",
+                "bSortable": false,
+                "render": function (data) {
+                    if (data) {
+                        return data
+                    } else {
+                        return "0";
+                    }
+                }
+            }, {
+                "sClass": "text-c col-md-3 col-sm-3",
+                "data": "Bid",
+                "bSortable": false,
+                "render": function (data, type, full, meta) {
+                    var buttons = '';
+                    if (full.Bnum == 0) {
+                        buttons += '&nbsp;&nbsp;<a onclick=\'layer_show("添加教室","building/totjjs?Bid=' + data + '","600","400")\' href="javascript:void(0)" title="添加教室"><i class="Hui-iconfont">&#xe600;</i></a>';
+                    } else {
+                        buttons += '&nbsp;&nbsp;<a onclick=\'layer_show("查看教室","building/toCkjs?Bid=' + data + '","600","400")\' href="javascript:void(0)" title="查看教室"><i class="Hui-iconfont">&#xe709;</i></a>';
+                        buttons += '&nbsp;&nbsp;<a onclick=\'layer_show("添加教室","building/totjjs?Bid=' + data + '","600","400")\' href="javascript:void(0)" title="添加教室"><i class="Hui-iconfont">&#xe600;</i></a>';
+                        buttons += '&nbsp;&nbsp;<a onclick=\'toZy(' + data + ')\'class="ml-5" title="删除教学楼" href="javascript:; style="text-decoration:none"><i class="Hui-iconfont">&#xe609;</i></a>';
+                    }
+                    return buttons;
+                }
+            }]
+        }).api(); //此处需调用api()方法,否则返回的是JQuery对象而不是DataTables的API对象
+    });
+</script>
+</body>
+</html>

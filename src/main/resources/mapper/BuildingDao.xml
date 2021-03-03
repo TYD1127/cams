@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.winsoar.cams.dao.BuildingDao">
+
+    <resultMap type="com.winsoar.cams.entity.Building" id="BuildingMap">
+        <result property="buildingId" column="building_id" jdbcType="INTEGER"/>
+        <result property="buildingName" column="building_name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="BuildingMap">
+        select
+          building_id, building_name
+        from cams.building
+        where building_id = #{buildingId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="BuildingMap">
+        select
+          building_id, building_name
+        from cams.building
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="BuildingMap">
+        select
+        building_id, building_name
+        from cams.building
+        <where>
+            <if test="buildingId != null">
+                and building_id = #{buildingId}
+            </if>
+            <if test="buildingName != null and buildingName != ''">
+                and building_name = #{buildingName}
+            </if>
+        </where>
+    </select>
+    <select id="queryByAll" resultType="java.util.Map">
+        SELECT
+            b.building_id AS Bid,
+            b.building_name AS Bname,
+            COUNT(c2.class_room_id) AS Bnum
+        FROM building b
+            LEFT JOIN classroom c2 ON b.building_id = c2.building_id
+        GROUP BY b.building_id
+        ORDER BY b.building_id
+    </select>
+    <select id="toCkjs" resultType="java.util.Map">
+        SELECT
+            c.class_room_id AS jsid,
+            c.class_room_name AS jsname,
+            COUNT(ds.detailed_schedule_id) AS pknum
+        FROM classroom c
+            LEFT JOIN detailed_schedule ds ON c.class_room_id = ds.class_room_id
+        where c.building_id=#{bid}
+        GROUP BY c.class_room_id
+        ORDER BY c.class_room_id
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="buildingId" useGeneratedKeys="true">
+        insert into cams.building(building_name)
+        values (#{buildingName})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="buildingId" useGeneratedKeys="true">
+        insert into cams.building(building_name)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.buildingName})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="buildingId" useGeneratedKeys="true">
+        insert into cams.building(building_name)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.buildingName})
+        </foreach>
+        on duplicate key update
+        building_name = values(building_name)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update cams.building
+        <set>
+            <if test="buildingName != null and buildingName != ''">
+                building_name = #{buildingName},
+            </if>
+        </set>
+        where building_id = #{buildingId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from cams.building where building_id = #{buildingId}
+    </delete>
+
+</mapper>
+

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.winsoar.cams.dao.ResultDao">
+
+    <resultMap type="com.winsoar.cams.entity.Result" id="ResultMap">
+        <result property="resultId" column="result_id" jdbcType="INTEGER"/>
+        <result property="courseId" column="course_id" jdbcType="INTEGER"/>
+        <result property="personId" column="person_id" jdbcType="INTEGER"/>
+        <result property="classId" column="class_id" jdbcType="INTEGER"/>
+        <result property="score" column="Score" jdbcType="INTEGER"/>
+        <result property="passed" column="passed" jdbcType="INTEGER"/>
+        <result property="gradeId" column="grade_id" jdbcType="INTEGER"/>
+        <result property="schoolYear" column="school_year" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ResultMap">
+        select
+          result_id, course_id, person_id, class_id, Score, passed, grade_id, school_year
+        from cams.result
+        where result_id = #{resultId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ResultMap">
+        select
+          result_id, course_id, person_id, class_id, Score, passed, grade_id, school_year
+        from cams.result
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="ResultMap">
+        select
+        result_id, course_id, person_id, class_id, Score, passed, grade_id, school_year
+        from cams.result
+        <where>
+            <if test="resultId != null">
+                and result_id = #{resultId}
+            </if>
+            <if test="courseId != null">
+                and course_id = #{courseId}
+            </if>
+            <if test="personId != null">
+                and person_id = #{personId}
+            </if>
+            <if test="classId != null">
+                and class_id = #{classId}
+            </if>
+            <if test="score != null">
+                and Score = #{score}
+            </if>
+            <if test="passed != null">
+                and passed = #{passed}
+            </if>
+            <if test="gradeId != null">
+                and grade_id = #{gradeId}
+            </if>
+            <if test="schoolYear != null">
+                and school_year = #{schoolYear}
+            </if>
+        </where>
+    </select>
+    <select id="queryBypersonId" resultType="java.util.Map">
+        SELECT
+                r.result_id AS ID,
+                c.course_name AS courseName,
+                r.Score AS Score,
+                r.school_year AS YEAR,
+                r.passed AS sftg,
+                p.person_name AS userName
+        FROM
+             result r
+                    INNER JOIN course c
+                               ON r.course_id = c.course_id
+                    INNER JOIN person p
+                               ON r.person_id = p.person_id
+                    INNER JOIN classtable ct
+                               ON r.class_id = ct.class_id
+                    INNER JOIN grade g
+                               ON r.grade_id = g.grade_id
+        WHERE r.`person_id` =#{personId}
+        ORDER BY c.course_id ;
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="resultId" useGeneratedKeys="true">
+        insert into cams.result(course_id, person_id, class_id, Score, passed, grade_id, school_year)
+        values (#{courseId}, #{personId}, #{classId}, #{score}, #{passed}, #{gradeId}, #{schoolYear})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="resultId" useGeneratedKeys="true">
+        insert into cams.result(course_id, person_id, class_id, Score, passed, grade_id, school_year)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.courseId}, #{entity.personId}, #{entity.classId}, #{entity.score}, #{entity.passed},
+            #{entity.gradeId}, #{entity.schoolYear})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="resultId" useGeneratedKeys="true">
+        insert into cams.result(course_id, person_id, class_id, Score, passed, grade_id, school_year)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.courseId}, #{entity.personId}, #{entity.classId}, #{entity.score}, #{entity.passed},
+            #{entity.gradeId}, #{entity.schoolYear})
+        </foreach>
+        on duplicate key update
+        course_id = values(course_id) , person_id = values(person_id) , class_id = values(class_id) , Score =
+        values(Score) , passed = values(passed) , grade_id = values(grade_id) , school_year = values(school_year)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update cams.result
+        <set>
+            <if test="courseId != null">
+                course_id = #{courseId},
+            </if>
+            <if test="personId != null">
+                person_id = #{personId},
+            </if>
+            <if test="classId != null">
+                class_id = #{classId},
+            </if>
+            <if test="score != null">
+                Score = #{score},
+            </if>
+            <if test="passed != null">
+                passed = #{passed},
+            </if>
+            <if test="gradeId != null">
+                grade_id = #{gradeId},
+            </if>
+            <if test="schoolYear != null">
+                school_year = #{schoolYear},
+            </if>
+        </set>
+        where result_id = #{resultId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from cams.result where result_id = #{resultId}
+    </delete>
+
+</mapper>
+
