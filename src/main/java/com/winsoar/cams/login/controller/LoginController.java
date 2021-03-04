@@ -63,4 +63,42 @@ public class LoginController {
         return JSON.toJSONString(json);
     }
 
+
+    @ResponseBody
+    @RequestMapping(value = "/mlogin", method = RequestMethod.POST)
+    public String toMLogin(User user) {
+        JSONObject json = new JSONObject();
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        try {
+            User user1 = userMapper.selectByUsername(user.getUsername());
+            if (user1 != null) {
+                String dbPassWord = user1.getPassword();
+                if (bCryptPasswordEncoder.matches(user.getPassword(), dbPassWord)) {
+                    //创建token
+                    String token = JwtUtil.generateToken(user1);
+                    json.put("status", true);
+                    json.put("code", 1);
+                    json.put("message", "登陆成功");
+                    json.put("userInfo",user1);
+                    json.put(JwtUtil.AUTHORIZATION, token);
+                } else {
+                    json.put("status", false);
+                    json.put("code", 2);
+                    json.put("message", "登陆失败,密码错误");
+                }
+            } else {
+                json.put("status", false);
+                json.put("code", 0);
+                json.put("message", "用户不存在");
+            }
+        } catch (Exception e) {
+            json.put("status", false);
+            json.put("code", -1);
+            json.put("status", false);
+            json.put("message", e.getMessage());
+
+        }
+        return JSON.toJSONString(json);
+    }
+
 }

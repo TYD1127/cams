@@ -29,7 +29,13 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     public static final String[] AUTH_WHITELIST = {
-            "/login", "/", "toLogin", "/favicon.ico"// other public endpoints of your API may be appended to this array
+            "/login",
+            "/",
+            "/mlogin",
+            "/gologin",
+            "/mregister",
+            "/toLogin",
+            "/favicon.ico" // other public endpoints of your API may be appended to this array
     };
 
     @Bean
@@ -55,6 +61,8 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // 登录URL不需要认证
                 .antMatchers("/login").permitAll()
+                .antMatchers("/mlogin").permitAll()
+                .antMatchers("/toLogin").permitAll()
                 .antMatchers("/").permitAll()
                 // 其他所有请求需要身份认证
                 .anyRequest().authenticated().and()

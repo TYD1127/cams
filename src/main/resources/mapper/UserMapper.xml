@@ -5,9 +5,10 @@
         <id column="account" jdbcType="VARCHAR" property="account"/>
         <result column="password" jdbcType="VARCHAR" property="password"/>
         <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="usertype" jdbcType="INTEGER" property="usertype"/>
     </resultMap>
     <sql id="Base_Column_List">
-    account, password, username
+    account, password, username, usertype
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
