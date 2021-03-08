@@ -60,6 +60,24 @@ public class ResultController {
         System.out.println("jsonObject" + jsonObject);
         return jsonObject;
     }
+    /*    APP获取学生信息*/
+    @RequestMapping("/mtgetstulist")
+    @ResponseBody
+    public JSONArray mtgetstulist() {
+        List<Person> StudentList = personMapper.selectStudentPerson();
+        JSONArray jsonObject = (JSONArray) JSON.toJSON(StudentList);
+        System.out.println("jsonObject" + jsonObject);
+        return jsonObject;
+    }
+    /*    APP获取学生成绩*/
+    @RequestMapping("/mtgetResul")
+    @ResponseBody
+    public JSONArray mtgetResul(Long personId) {
+        List<Map<String,Object>> result = resultService.queryBypersonId(personId);
+        JSONArray jsonObject = (JSONArray) JSON.toJSON(result);
+        System.out.println("jsonObject" + jsonObject);
+        return jsonObject;
+    }
     @RequestMapping("/getResul")
     public ModelAndView getResul(Long personId) {
         ModelAndView view = new ModelAndView();
