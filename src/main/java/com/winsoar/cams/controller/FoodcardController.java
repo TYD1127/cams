@@ -38,6 +38,7 @@ public class FoodcardController {
 
         return this.foodcardService.queryById(id);
     }
+
     @RequestMapping("/toFoodCard")
     public String toFoodCard() {
         return "h-ui/FoodCard/index";
@@ -47,7 +48,16 @@ public class FoodcardController {
     @RequestMapping("/getInfo")
     @ResponseBody
     public JSONArray getInfo() {
-        List<Map<String,Object>> cardInfo = foodcardService.getInfo();
+        List<Map<String, Object>> cardInfo = foodcardService.getInfo();
+        JSONArray jsonObject = (JSONArray) JSON.toJSON(cardInfo);
+        return jsonObject;
+    }
+
+    /*    获取饭卡信息*/
+    @RequestMapping("/mgetFKInfo")
+    @ResponseBody
+    public JSONArray mgetInfo() {
+        List<Map<String, Object>> cardInfo = foodcardService.getInfo();
         JSONArray jsonObject = (JSONArray) JSON.toJSON(cardInfo);
         return jsonObject;
     }

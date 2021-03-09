@@ -35,6 +35,7 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
             "/gologin",
             "/mregister",
             "/toLogin",
+            "/schedule/toIndex",
             "/favicon.ico" // other public endpoints of your API may be appended to this array
     };
 
@@ -63,6 +64,8 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login").permitAll()
                 .antMatchers("/mlogin").permitAll()
                 .antMatchers("/toLogin").permitAll()
+                .antMatchers("/schedule/mtoIndex").permitAll()
+
                 .antMatchers("/").permitAll()
                 // 其他所有请求需要身份认证
                 .anyRequest().authenticated().and()

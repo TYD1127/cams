@@ -74,6 +74,14 @@ public class ResultController {
     @ResponseBody
     public JSONArray mtgetResul(Long personId) {
         List<Map<String,Object>> result = resultService.queryBypersonId(personId);
+        if (result.size()==0){
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put("courseName","暂无成绩");
+            hashMap.put("Score","暂无成绩");
+            hashMap.put("sftg","暂无成绩");
+            hashMap.put("YEAR","暂无成绩");
+            result.add(hashMap);
+        }
         JSONArray jsonObject = (JSONArray) JSON.toJSON(result);
         System.out.println("jsonObject" + jsonObject);
         return jsonObject;

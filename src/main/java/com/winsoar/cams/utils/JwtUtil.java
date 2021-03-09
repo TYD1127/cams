@@ -18,7 +18,7 @@ public class JwtUtil {
     /**过期时间---24 hour*/
     private static final int EXPIRATION_TIME = 60*60*12;
     /**自己设定的秘钥*/
-    private static final String SECRET = "winSoar";
+    private static final String SECRET = "TangYaDong";
     /**前缀*/
     public static final String TOKEN_PREFIX = "Bearer ";
     /**表头授权*/

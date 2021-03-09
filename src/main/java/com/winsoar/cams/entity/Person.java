@@ -19,7 +19,7 @@ public class Person implements Serializable {
      */
     private String personName;
     /**
-     * 1=老师,2=小朋友
+     * 1=老师,2=学生
      */
     private Integer personType;
     /**
