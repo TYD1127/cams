@@ -28,7 +28,7 @@ public class ScheduleControlle {
     //App获取课表页面
     @RequestMapping("/mtoIndex")
     public String tomIndex() {
-        return "h-ui/schedule/index";
+        return "h-ui/schedule/mindex";
     }
 //    查询课表详细
     @RequestMapping("/getScheduleList")

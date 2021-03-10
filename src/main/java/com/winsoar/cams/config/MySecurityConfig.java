@@ -35,7 +35,7 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
             "/gologin",
             "/mregister",
             "/toLogin",
-            "/schedule/toIndex",
+            "/schedule/mtoIndex",
             "/favicon.ico" // other public endpoints of your API may be appended to this array
     };
 
