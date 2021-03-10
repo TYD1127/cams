@@ -36,6 +36,7 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
             "/mregister",
             "/toLogin",
             "/schedule/mtoIndex",
+            "/schedule/getScheduleList",
             "/favicon.ico" // other public endpoints of your API may be appended to this array
     };
 
@@ -64,13 +65,16 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login").permitAll()
                 .antMatchers("/mlogin").permitAll()
                 .antMatchers("/toLogin").permitAll()
+                /*跳转获取课表*/
                 .antMatchers("/schedule/mtoIndex").permitAll()
+                /*获取课表详情*/
+                .antMatchers("/schedule/getScheduleList").permitAll()
 
                 .antMatchers("/").permitAll()
                 // 其他所有请求需要身份认证
                 .anyRequest().authenticated().and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager()));
-        // 退出登录处理器
+         /*退出登录处理器*/
         http.headers().frameOptions().sameOrigin();// 解决IFrame拒绝的问题
         http.logout()
                 .logoutSuccessUrl("/")

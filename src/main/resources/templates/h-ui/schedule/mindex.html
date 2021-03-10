@@ -19,6 +19,9 @@
     <link rel="stylesheet" type="text/css" href="../../h-ui/static/h-ui.admin/css/style.css"/>
 
     <style type="text/css">
+        body{
+            overflow: auto;
+        }
         .time-table {
             table-layout: fixed;
         }
@@ -64,12 +67,19 @@
                     <option value="">班级</option>
                 </select>
             </span>
+        <span>
+            <a class="btn btn-success radius r radius" style="line-height:1.6em;margin-top:3px"
+                 href="javascript:location.replace(location.href);" title="刷新">
+                    <i class="Hui-iconfont">&#xe68f;</i>
+            </a>
+        </span>
         <button class="btn btn-success radius" onclick="loadTimetables()">
             <i class="Hui-iconfont">&#xe665;</i> 查询
         </button>
     </div>
-    <div class="row cl mt-10" >
-        <table id="timetables" class="table table-border table-bordered radius table-striped" style="table-layout: fixed;">
+    <div class="row  pd-20" >
+        <table id="timetables" class="table table-border  table-bordered radius table-striped "
+               style="table-layout: fixed;">
         </table>
     </div>
 </div>
@@ -111,7 +121,9 @@
     function toDownload() {
         self.location.href = "manager/timetableDetail/downloadTemplate?id=${timetableId}";
     }
-    var weekdays = [ '星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日' ];
+
+    var weekdays = ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日'];
+
     function loadTimetables() {
         $.ajax({
             type: "post",
@@ -136,15 +148,16 @@
                 var weekDay = [];
                 for (var day = 0; day < maxday; day++) {
                     var d = day + 1;
-                    str += '<th id=day'+d+'>' + weekdays[day] + '</th>';
+                    str += '<th id=day' + d + '>' + weekdays[day] + '</th>';
                 }
                 str += '</tr>';
 
                 for (var part = 0; part < maxpart; part++) {
                     str += '<tr class="text-c">';
-                    str += '  <th style="height: auto">' + (part + 1) + '</th>';
+                    str += '  <th>' + (part + 1) + '</th>';
                     for (var day = 0; day < maxday; day++) {
-                        str += '<td id="t_' + (day + 1) + '_' + (part + 1) + '" nowrap="nowrap" height="50" style="cursor: pointer" onclick="showEdit(' + (day + 1) + ',' + (part + 1) + ')">-</td>';
+                        // /*nowrap="nowrap"*/换行
+                        str += '<td id="t_' + (day + 1) + '_' + (part + 1) + '" height="25dp" style="cursor: pointer ;font-size: 12px" onclick="showEdit(' + (day + 1) + ',' + (part + 1) + ')">-</td>';
                     }
                     str += '</tr>';
                 }
@@ -164,7 +177,7 @@
     }
 
     function showEdit(day, part) {
-        alert(day+"-"+part)
+        alert(day + "-" + part)
         //layer_show('修改课表详细', 'manager/timetableDetail/toDetailEdit?classId=' + classId + '&day=' + day + '&part=' + part + '&timetableId=${timetableId}', '400', '320');
     }
 

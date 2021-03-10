@@ -35,8 +35,9 @@ public class ScheduleControlle {
     @ResponseBody
     public JSONArray getScheduleList() {
         List<Map<String, Object>> schedules = scheduleService.queryScheduleAll();
-        String json1=JSON.toJSONString(schedules);
+        /*String json1=JSON.toJSONString(schedules);*/
         JSONArray jsonObject = (JSONArray) JSON.toJSON(schedules);
+
         return jsonObject;
     }
 
