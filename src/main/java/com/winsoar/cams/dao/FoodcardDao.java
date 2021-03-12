@@ -81,5 +81,7 @@ public interface FoodcardDao {
     int deleteById(Long foodcardId);
 
     List<Map<String, Object>> getInfo();
+
+    Integer setztai(String zt, String cardNum);
 }
 

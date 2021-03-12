@@ -113,6 +113,16 @@
         </set>
         where foodcard_id = #{foodcardId}
     </update>
+    <update id="setztai">
+        update cams.foodcard
+        <set>
+            <if test="zt != null">
+                is_detele = #{zt}
+            </if>
+        </set>
+        where card_num = #{cardNum}
+    </update>
+
 
     <!--通过主键删除-->
     <delete id="deleteById">

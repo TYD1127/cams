@@ -55,4 +55,6 @@ public interface FoodcardService {
     boolean deleteById(Long foodcardId);
 
     List<Map<String, Object>> getInfo();
+
+    Integer setztai(String zt, String cardNum);
 }

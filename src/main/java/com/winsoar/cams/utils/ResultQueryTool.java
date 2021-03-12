@@ -162,9 +162,9 @@ public class ResultQueryTool {
             String substring = ticketNumber.substring(9, 10);
             // todo 这个前缀可能每年会变
             if ("1".equals(substring)) {
-                return "CET4_203_DANGCI";
+                return "CET_202012_DANGCI";
             } else {
-                return "CET6_203_DANGCI";
+                return "CET_202012_DANGCI";
             }
         } else {
             return "NTCE_BS";

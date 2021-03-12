@@ -33,7 +33,8 @@ public class CetController {
     @RequestMapping(value = "/cet4")
     @ResponseBody
     public Map<String, Object> CetScoreQuery(String ticketNumber, String name, HttpServletRequest request) {
-        Map<String, Object> map = ResultQueryTool.resultInquiry(ticketNumber, name, request);
+
+        Map<String, Object> map = ResultQueryTool.resultInquiry(ticketNumber.trim(), name.trim(), request);
         System.out.println(map);
         return map;
     }
@@ -49,7 +50,7 @@ public class CetController {
     @RequestMapping(value = "/ntce")
     @ResponseBody
     public List<Object> NTCEquery(String zjh, String uname, HttpServletRequest request) {
-        List<Object> list = ResultQueryTool.NTCEquery(zjh, uname, request);
+        List<Object> list = ResultQueryTool.NTCEquery(zjh.trim(), uname.trim(), request);
         System.out.println(list);
         return list;
     }

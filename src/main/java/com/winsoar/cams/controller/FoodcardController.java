@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,6 +61,20 @@ public class FoodcardController {
         List<Map<String, Object>> cardInfo = foodcardService.getInfo();
         JSONArray jsonObject = (JSONArray) JSON.toJSON(cardInfo);
         return jsonObject;
+    }
+    /*    停用or启用饭卡信息*/
+    @RequestMapping("/msetztai")
+    @ResponseBody
+    public HashMap<String ,Object> msetztai(@RequestParam String zt,String cardNum) {
+        HashMap<String, Object> map = new HashMap<>();
+
+        int setztai = foodcardService.setztai(zt,cardNum);
+        if (setztai==0){
+            map.put("code",400);
+        }else {
+            map.put("code",200);
+        }
+        return map;
     }
 
 }

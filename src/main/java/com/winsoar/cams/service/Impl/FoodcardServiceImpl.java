@@ -82,4 +82,11 @@ public class FoodcardServiceImpl implements FoodcardService {
     public List<Map<String, Object>> getInfo() {
         return foodcardDao.getInfo();
     }
+
+    @Override
+    public Integer setztai(String zt, String cardNum) {
+        return foodcardDao.setztai(zt,cardNum);
+    }
+
+
 }
