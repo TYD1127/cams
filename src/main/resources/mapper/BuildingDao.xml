@@ -51,7 +51,8 @@
         SELECT
             c.class_room_id AS jsid,
             c.class_room_name AS jsname,
-            COUNT(ds.detailed_schedule_id) AS pknum
+            COUNT(ds.detailed_schedule_id) AS pknum,
+            c.class_room_type AS jstype
         FROM classroom c
             LEFT JOIN detailed_schedule ds ON c.class_room_id = ds.class_room_id
         where c.building_id=#{bid}
