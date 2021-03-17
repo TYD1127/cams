@@ -76,10 +76,13 @@ public class BuildingController {
         ArrayList<HashMap<String, Object>> list = new ArrayList<>();
         List<Map<String, Object>> maps = buildingService.queryByAll();
         for (Map<String, Object> map : maps) {
-            HashMap<String, Object> hashMap = new HashMap<>();
+            HashMap<String, Object> m = new HashMap<>();
             List<Map<String, Object>> jsInfo = buildingService.toCkjs(map.get("Bid").toString());
-            hashMap.put(map.get("Bname").toString(), jsInfo);
-            list.add(hashMap);
+            m.put("croominfo", jsInfo);
+            m.put("Bname",map.get("Bname").toString());
+            System.out.println(map.toString());
+            m.put("Bid",map.get("Bid").toString());
+            list.add(m);
         }
         JSONArray jsonObject = (JSONArray) JSON.toJSON(list);
         return jsonObject;

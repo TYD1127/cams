@@ -59,9 +59,12 @@
                 g.grade_name  AS gradeName,
                 p.person_name AS masterName,
                 c.class_id    AS Cid
+                ,COUNT(p2.person_id) AS ClassStuNum
         FROM classtable c
                 INNER JOIN grade g ON c.grade_id = g.grade_id
-                INNER JOIN person p ON c.class_master_id = p.person_id
+                LEFT JOIN person p ON c.class_master_id = p.person_id
+                LEFT JOIN person p2 on c.class_id=p2.class_id
+            GROUP BY c.class_id
         ORDER BY c.class_id;
     </select>
 
